@@ -79,7 +79,7 @@ export class TaskController {
     type: Exception,
     status: 404,
   })
-  @Patch(':id')
+  @Patch(':id(\\d+)')
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTaskDto,

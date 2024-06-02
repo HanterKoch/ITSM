@@ -8,6 +8,7 @@ async function bootstrap() {
 
   const serverConfig = {
     PORT: 3000,
+    host: 'localhost'
   }
 
   const swaggerConfig = new DocumentBuilder().build();
@@ -16,6 +17,6 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app, swagegrDocument);
 
-  await app.listen(serverConfig.PORT).then(() => Logger.log(`Server started on port ${serverConfig.PORT}`, AppModule.name));
+  await app.listen(serverConfig.PORT).then(() => Logger.log(`Server started on http://localhost:${serverConfig.PORT}`, AppModule.name));
 }
 bootstrap();

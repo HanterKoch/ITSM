@@ -11,4 +11,7 @@ export class User extends BaseEntity {
 
     @Column({comment: 'Роль', type: String})
     role: string;
+
+    @Column({name: 'Имя', type: String})
+    name: string;
 }

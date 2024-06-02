@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseFilters } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseFilters, BadRequestException } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { ApiBody, ApiNotFoundResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBody, ApiNotFoundResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TaskDto } from './dto/task.dto';
 import { HttpExceptionFilter } from 'src/tools/exception-filter';
 import { Exception } from 'src/tools/exception-schema';
@@ -24,6 +24,10 @@ export class TaskController {
     status: 201,
     description: 'Задача добавлена',
     type: TaskDto,
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    type: BadRequestException,
   })
   @Post()
   async create(@Body() createTaskDto: CreateTaskDto) {
@@ -86,4 +90,30 @@ export class TaskController {
   ) {
     return await this.taskService.update(id, dto);
   }
+
+  @ApiOperation({
+    description: 'Удаление задачи по id',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Обновлена задача',
+    type: Boolean,
+  })
+  @ApiParam({
+    name: 'id',
+    type: Boolean,
+    example: 1,
+  })
+  @ApiNotFoundResponse({
+    description: 'Задача с таким id не найдена',
+    type: Exception,
+    status: 404,
+  })
+  @Delete(':id(\\d+)')
+  async delete(
+    @Param('id', ParseIntPipe) id: number
+  ) {
+    return await this.taskService.delete(id);
+  }
+
 }

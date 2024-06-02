@@ -2,7 +2,7 @@ import { NamingStrategyNotFoundError, Repository, TransactionRollbackEvent } fro
 import { CreateTaskDto } from "./dto/create-task.dto";
 import { Task } from "src/repository/task.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { NotFoundException } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { UpdateTaskDto } from "./dto/update-task.dto";
 
 export class TaskRepository {
@@ -12,6 +12,11 @@ export class TaskRepository {
     ) {}
 
     async create(dto: CreateTaskDto): Promise<Task> {
+        if (!dto.answer) {
+            const err = new BadRequestException('Не указаны контакты пользователя');
+            console.log(err)
+            throw err;
+        }
         const entity = this.taskRepository.create();
         entity.answer = dto.answer;
         entity.issueText = dto.text;
@@ -48,5 +53,15 @@ export class TaskRepository {
         if (!entity) throw new NotFoundException(`Задача с id: ${id} не найдена`);
         entity.isCompleted = dto.isCompleted;
         return await this.taskRepository.save(entity);
+    }
+
+    async delete(id: number) {
+        const entity = await this.taskRepository.findOne({
+            where: {id},
+        });
+        if (!entity) throw new NotFoundException(`Задача с id: ${id} не найдена`);
+        const result = await this.taskRepository.delete(entity);
+        if (result?.affected > 0) return true;
+        throw new NotFoundException(`Задача с id: ${id} не найдена`);
     }
 }

@@ -29,7 +29,7 @@ export class TaskService {
     return await this.taskRepository.update(id, updateTaskDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async delete(id: number) {
+    return await this.taskRepository.delete(id);
   }
 }
